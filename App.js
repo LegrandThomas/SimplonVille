@@ -1,41 +1,44 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, Button } from "react-native";
+import { StyleSheet, View, Button, Switch, Text, Alert,Image} from "react-native";
 import Geoloc from './Components/Geoloc';
 import { PermissionsAndroid } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import * as Location from 'expo-location';
 
-const requestPermissions = async () => {
+const Stack = createStackNavigator();
+
+const requestCameraPermission = async () => {
   try {
-    const cameraGranted = await PermissionsAndroid.request(
+    const cameraPermission = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.CAMERA,
       {
-        title: "Camera Permission",
-        message: "Please allow camera access for this app.",
-        buttonNeutral: "Ask Me Later",
-        buttonNegative: "Cancel",
-        buttonPositive: "OK"
+        title: "⚠️ Camera Permission ⚠️",
+        message: "Autoriser l'application à accéder à la caméra ?",
+        buttonNegative: "Non",
+        buttonPositive: "Oui"
       }
     );
+    return cameraPermission === PermissionsAndroid.RESULTS.GRANTED;
+  } catch (err) {
+    console.warn(err);
+    return false;
+  }
+};
 
-    const locationGranted = await PermissionsAndroid.request(
+const requestLocationPermission = async () => {
+  try {
+    const locationPermission = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       {
-        title: "Location Permission",
-        message: "Please allow location access for this app.",
-        buttonNeutral: "Ask Me Later",
-        buttonNegative: "Cancel",
-        buttonPositive: "OK"
+        title: "⚠️ Localisation Permission  ⚠️",
+        message: "Autoriser l'application à utiliser la géolocalisation ?",
+        buttonNegative: "Non",
+        buttonPositive: "Oui"
       }
     );
-
-    // Check if both permissions are granted
-    if (cameraGranted === PermissionsAndroid.RESULTS.GRANTED && locationGranted === PermissionsAndroid.RESULTS.GRANTED) {
-      console.log("Camera and location access granted");
-      return true;
-    } else {
-      console.log("Camera or location permission denied");
-      return false;
-    }
+    return locationPermission === PermissionsAndroid.RESULTS.GRANTED;
   } catch (err) {
     console.warn(err);
     return false;
@@ -43,24 +46,138 @@ const requestPermissions = async () => {
 };
 
 export default function App() {
+  const [grantedCamera, setGrantedCamera] = useState(false);
+  const [grantedLocation, setGrantedLocation] = useState(false);
+  const [permissionsRequested, setPermissionsRequested] = useState(false);
+  const [showToggles, setShowToggles] = useState(false);
+  const [cameraToggle, setCameraToggle] = useState(false);
+  const [locationToggle, setLocationToggle] = useState(false);
+
+  const handleCameraToggle = () => {
+    setCameraToggle(!cameraToggle);
+  };
+
+  const handleLocationToggle = () => {
+    setLocationToggle(!locationToggle);
+  };
+
   const handlePermissions = async () => {
-    const granted = await requestPermissions();
-    if (granted) {
-      // Les autorisations sont accordées, vous pouvez maintenant utiliser la géolocalisation, la caméra, etc.
+    setShowToggles(true);
+  };
+
+  const handleRequestPermissions = async (navigation) => {
+    if (cameraToggle || locationToggle) {
+      Alert.alert(
+        "Confirmation",
+        "Voulez-vous confirmer les autorisations ?",
+        [
+          {
+            text: "Non",
+            onPress: () => {
+              console.log("Autorisations refusées");
+              setCameraToggle(false);
+              setLocationToggle(false);
+            },
+            style: "cancel"
+          },
+          {
+            text: "Oui",
+            onPress: async () => {
+              if (cameraToggle) {
+                const cameraPermissionGranted = await requestCameraPermission();
+                setGrantedCamera(cameraPermissionGranted);
+                console.log("Autorisation caméra accordée :", cameraPermissionGranted);
+              }
+              if (locationToggle) {
+                const locationPermissionGranted = await requestLocationPermission();
+                setGrantedLocation(locationPermissionGranted);
+                console.log("Autorisation localisation accordée :", locationPermissionGranted);
+              }
+              setPermissionsRequested(true);
+
+              // Naviguer vers la page "App" ici
+              navigation.navigate('App');
+            }
+          }
+        ]
+      );
     } else {
-      // Les autorisations ont été refusées, gérez cela en conséquence.
+      console.log("Aucune autorisation sélectionnée");
+      setGrantedLocation(false);
+      setGrantedCamera(false);
+      // Naviguer vers la page "App" ici
+      navigation.navigate('App');
     }
   };
 
+  useEffect(() => {
+    if (permissionsRequested) {
+      if (grantedCamera) {
+        console.log("Autorisation caméra accordée");
+        setGrantedCamera(true);
+      } else {
+        console.log("Autorisation caméra refusée");
+        setGrantedCamera(false);
+      }
+      if (grantedLocation) {
+        console.log("Autorisation localisation accordée");
+        setGrantedLocation(true);
+      } else {
+        console.log("Autorisation localisation refusée");
+        setGrantedLocation(false);
+      }
+    }
+  }, [permissionsRequested, grantedCamera, grantedLocation]);
+
   return (
-    <View style={styles.container}>
-      <StatusBar style="auto" />
-      <Button title="Request Permissions" onPress={handlePermissions} />
-      {/* <Geoloc /> */}
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" options={{ title: 'Accueil' }}>
+          {({ navigation }) => (
+            <View style={styles.container}>
+            <View style={styles.imageContainer}>
+                    {/* <Image
+                      source={require('./assets/logo.png')} 
+                      style={styles.logo}
+                    /> */}
+                  </View>
+              <StatusBar style="auto" />
+             
+              {showToggles ? (
+                <View>
+                  <View style={styles.toggleContainer}>
+                    <Text>Autoriser l'accès à la caméra</Text>
+                    <Switch
+                      value={cameraToggle}
+                      onValueChange={handleCameraToggle}
+                    />
+                  </View>
+                  <View style={styles.toggleContainer}>
+                    <Text>Autoriser l'accès à la géolocalisation</Text>
+                    <Switch
+                      value={locationToggle}
+                      onValueChange={handleLocationToggle}
+                    />
+                  </View>
+                  <Button title="Valider les autorisations" onPress={() => handleRequestPermissions(navigation)} />
+                </View>
+              ) : (
+                <Button title="Gérer les autorisations" onPress={handlePermissions} />
+              )}
+            </View>
+          )}
+        </Stack.Screen>
+        <Stack.Screen name="App" options={{ title: 'Géolocalisation' }}>
+          {({ navigation }) => (
+            <Geoloc
+              grantedLocation={grantedLocation}
+            />
+          )}
+        </Stack.Screen>
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -69,10 +186,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#d6fc7c",
     padding: 10
   },
-  item: {
-    margin: 30,
-    fontSize: 20,
-    fontWeight: "italics",
-    textAlign: "center"
-  }
+  toggleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 10,
+  },
 });
