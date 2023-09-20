@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, Button, Switch, Text, Alert,Image} from "react-native";
 import Geoloc from './Components/Geoloc';
+
 import { PermissionsAndroid } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -132,7 +133,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" options={{ title: 'Accueil' }}>
+        <Stack.Screen name="Home" options={{ title: 'Accueil' }} >
           {({ navigation }) => (
             <View style={styles.container}>
             <View style={styles.imageContainer}>
@@ -172,7 +173,9 @@ export default function App() {
             <Geoloc
               grantedLocation={grantedLocation}
             />
+          
           )}
+          
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
@@ -183,7 +186,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    backgroundColor: "#d6fc7c",
+    backgroundColor: "#ecf0f1",
     padding: 10
   },
   toggleContainer: {
@@ -192,4 +195,5 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 10,
   },
+ 
 });

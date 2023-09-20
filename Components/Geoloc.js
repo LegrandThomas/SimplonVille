@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Platform, Text, View, StyleSheet } from 'react-native';
+import { Platform, Text, View, StyleSheet, ScrollView } from 'react-native';
 import * as Location from 'expo-location';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import AlertForm from './AlertForm';
 
 export default function Geoloc({ grantedLocation }) {
   const [location, setLocation] = useState(null);
@@ -24,42 +25,45 @@ export default function Geoloc({ grantedLocation }) {
   }, [grantedLocation]);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Coordonnées de localisation</Text>
-      {errorMsg ? (
-        <Text style={styles.error}>{errorMsg}</Text>
-      ) : (
-        location && (
-          <View>
-            <Text style={styles.label}>Latitude :</Text>
-            <Text style={styles.value}>{location.coords.latitude}</Text>
-
-            <Text style={styles.label}>Longitude :</Text>
-            <Text style={styles.value}>{location.coords.longitude}</Text>
-          </View>
-        )
-      )}
+    <ScrollView contentContainerStyle={styles.container}>
       <View>
-     <MapView
-       provider={PROVIDER_GOOGLE} 
-       region={{
-         latitude: 37.78825,
-         longitude: -122.4324,
-         latitudeDelta: 0.015,
-         longitudeDelta: 0.0121,
-       }}
-     >
-     </MapView>
-   </View>
-    </View>
+        <Text style={styles.title}>Coordonnées de localisation</Text>
+        {errorMsg ? (
+          <Text style={styles.error}>{errorMsg}</Text>
+        ) : (
+          location && (
+            <View>
+              <Text style={styles.label}>Latitude :</Text>
+              <Text style={styles.value}>{location.coords.latitude}</Text>
+
+              <Text style={styles.label}>Longitude :</Text>
+              <Text style={styles.value}>{location.coords.longitude}</Text>
+            </View>
+          )
+        )}
+        <View>
+          <MapView
+            provider={PROVIDER_GOOGLE}
+            style={styles.map}
+            region={{
+              latitude: location ? location.coords.latitude : 37.78825,
+              longitude: location ? location.coords.longitude : -122.4324,
+              latitudeDelta: 0.015,
+              longitudeDelta: 0.0121,
+            }}
+          />
+        </View>
+      </View>
+      <AlertForm />
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    paddingTop: 20, // Spacing at the top
   },
   title: {
     fontSize: 24,
@@ -77,5 +81,10 @@ const styles = StyleSheet.create({
   },
   value: {
     fontSize: 16,
+  },
+  map: {
+    width: 300, 
+    height: 200, 
+    marginTop: 16,
   },
 });
