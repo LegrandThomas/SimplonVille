@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, Button, Switch, Text, Alert,Image} from "react-native";
+import { StyleSheet, View, Button, Switch, Text, Alert, Image } from "react-native";
 import Geoloc from './Components/Geoloc';
-
+// import CookieConsent, { Cookies, getCookieConsentValue } from "react-cookie-consent";
 import { PermissionsAndroid } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import * as Location from 'expo-location';
+
 
 const Stack = createStackNavigator();
 
@@ -95,8 +95,6 @@ export default function App() {
                 console.log("Autorisation localisation accordée :", locationPermissionGranted);
               }
               setPermissionsRequested(true);
-
-              // Naviguer vers la page "App" ici
               navigation.navigate('App');
             }
           }
@@ -106,7 +104,6 @@ export default function App() {
       console.log("Aucune autorisation sélectionnée");
       setGrantedLocation(false);
       setGrantedCamera(false);
-      // Naviguer vers la page "App" ici
       navigation.navigate('App');
     }
   };
@@ -134,14 +131,17 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Home" options={{ title: 'Accueil' }} >
+        
           {({ navigation }) => (
             <View style={styles.container}>
-            <View style={styles.imageContainer}>
-                    {/* <Image
+            {/* <CookieConsent><Text>This website uses cookies to enhance the user experience.</Text></CookieConsent> */}
+              <View style={styles.imageContainer}>
+                {/* <Image
                       source={require('./assets/logo.png')} 
                       style={styles.logo}
                     /> */}
-                  </View>
+                    
+              </View>
               <StatusBar style="auto" />
              
               {showToggles ? (
@@ -168,14 +168,14 @@ export default function App() {
             </View>
           )}
         </Stack.Screen>
-        <Stack.Screen name="App" options={{ title: 'Géolocalisation' }}>
+        <Stack.Screen name="App" options={{ title: 'Repporting' }}>
           {({ navigation }) => (
             <Geoloc
               grantedLocation={grantedLocation}
             />
-          
+
           )}
-          
+
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
@@ -195,5 +195,5 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 10,
   },
- 
+
 });

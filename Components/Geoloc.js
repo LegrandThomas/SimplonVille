@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Platform, Text, View, StyleSheet, ScrollView } from 'react-native';
 import * as Location from 'expo-location';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView,{Marker,PROVIDER_GOOGLE } from 'react-native-maps';
 import AlertForm from './AlertForm';
 
 export default function Geoloc({ grantedLocation }) {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [mapRegion, setMapRegion] = useState(null);
+  const [mapReady, setMapReady] = useState(false);
 
   useEffect(() => {
     if (grantedLocation) {
@@ -15,6 +17,7 @@ export default function Geoloc({ grantedLocation }) {
         if (status === 'granted') {
           let location = await Location.getCurrentPositionAsync({});
           setLocation(location);
+          setMapReady(true);
         } else {
           setErrorMsg('Permission to access location was denied');
         }
@@ -23,6 +26,20 @@ export default function Geoloc({ grantedLocation }) {
       setErrorMsg('Géolocalisation désactivée');
     }
   }, [grantedLocation]);
+
+
+  useEffect(() => {
+    if (mapReady && location) {
+      setMapRegion({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        // latitude: 50.76667,
+        // longitude:  1.63333,wimille coordonnées
+        latitudeDelta: 0.015,
+        longitudeDelta: 0.0121,
+      });
+    }
+  }, [mapReady, location]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -42,16 +59,20 @@ export default function Geoloc({ grantedLocation }) {
           )
         )}
         <View>
-          <MapView
-            provider={PROVIDER_GOOGLE}
-            style={styles.map}
-            region={{
-              latitude: location ? location.coords.latitude : 37.78825,
-              longitude: location ? location.coords.longitude : -122.4324,
-              latitudeDelta: 0.015,
-              longitudeDelta: 0.0121,
-            }}
-          />
+     
+          {mapReady && mapRegion && (
+            <MapView
+          
+              provider={PROVIDER_GOOGLE}
+              style={styles.map}
+              region={mapRegion}
+              
+            >
+              <Marker  coordinate={mapRegion}/>
+               
+       
+            </MapView>
+          )}
         </View>
       </View>
       <AlertForm />
@@ -63,7 +84,7 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     alignItems: 'center',
-    paddingTop: 20, // Spacing at the top
+    paddingTop: 20,
   },
   title: {
     fontSize: 24,
@@ -83,8 +104,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   map: {
-    width: 300, 
-    height: 200, 
+    width: 300,
+    height: 200,
     marginTop: 16,
   },
 });
