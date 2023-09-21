@@ -171,6 +171,18 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
+        backgroundColor: "#fff", 
+        padding: 20, 
+        borderRadius: 10, 
+        shadowColor: "#000", 
+        shadowOffset: {
+          width: 0,
+          height: 4,
+        },
+        shadowOpacity: 0.5, 
+        shadowRadius: 5, 
+        elevation: 5, 
+        margin: 50, 
     },
     title: {
         fontSize: 24,
@@ -196,4 +208,5 @@ const styles = StyleSheet.create({
         color: 'red',
         fontSize: 14,
     },
+    
 });

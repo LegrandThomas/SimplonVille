@@ -6,6 +6,9 @@ import Geoloc from './Components/Geoloc';
 import { PermissionsAndroid } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import LottieView from 'lottie-react-native';
+
+
 
 
 const Stack = createStackNavigator();
@@ -135,14 +138,29 @@ export default function App() {
           {({ navigation }) => (
             <View style={styles.container}>
             {/* <CookieConsent><Text>This website uses cookies to enhance the user experience.</Text></CookieConsent> */}
-              <View style={styles.imageContainer}>
-                {/* <Image
-                      source={require('./assets/logo.png')} 
-                      style={styles.logo}
-                    /> */}
+       
+              <View style={styles.animationContainer}>
+              <Text style={styles.titleText}>SIMPLONVILLE</Text>
+              <View style={styles.neumorphicContainer}>
+              <Text>Bienvenue sur l'app de votre mairie qui vous permettra de reporter un incident dans votre commune!</Text>
+              <Text>Veuillez gérer vos diverses autorisations avant de poursuivre. 👇</Text>
+              </View>
+      <LottieView
+        autoPlay
+       
+        style={{
+          width: 200,
+          height: 200,
+          backgroundColor: '#eee',
+       
+        }}
+        // Find more Lottie files at https://lottiefiles.com/featured
+        source={require('./assets/logo2.json')}
+      />
                     
               </View>
               <StatusBar style="auto" />
+              
              
               {showToggles ? (
                 <View>
@@ -165,7 +183,7 @@ export default function App() {
               ) : (
                 <Button title="Gérer les autorisations" onPress={handlePermissions} />
               )}
-            </View>
+              </View>
           )}
         </Stack.Screen>
         <Stack.Screen name="App" options={{ title: 'Repporting' }}>
@@ -173,9 +191,7 @@ export default function App() {
             <Geoloc
               grantedLocation={grantedLocation}
             />
-
           )}
-
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
@@ -187,7 +203,19 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     backgroundColor: "#ecf0f1",
-    padding: 10
+    padding: 10,
+  },
+  titleContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  titleText: {
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+  buttonContainer: {
+    alignItems: 'center',
   },
   toggleContainer: {
     flexDirection: "row",
@@ -195,5 +223,25 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 10,
   },
-
+  
+  animationContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+    paddingBottom:5,
+  },
+  neumorphicContainer: {
+    backgroundColor: "#fff", 
+    padding: 20, 
+    borderRadius: 10, 
+    shadowColor: "#000", 
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.5, 
+    shadowRadius: 5, 
+    elevation: 5, 
+    margin: 40, 
+  },
 });

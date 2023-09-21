@@ -31,10 +31,10 @@ export default function Geoloc({ grantedLocation }) {
   useEffect(() => {
     if (mapReady && location) {
       setMapRegion({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        // latitude: 50.76667,
-        // longitude:  1.63333,wimille coordonnées
+        // latitude: location.coords.latitude,
+        // longitude: location.coords.longitude,
+        latitude: 50.76667,
+        longitude:  1.63333,
         latitudeDelta: 0.015,
         longitudeDelta: 0.0121,
       });
@@ -68,7 +68,7 @@ export default function Geoloc({ grantedLocation }) {
               region={mapRegion}
               
             >
-              <Marker  coordinate={mapRegion}/>
+              <Marker  draggable coordinate={mapRegion}/>
                
        
             </MapView>
