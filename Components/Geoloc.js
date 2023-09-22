@@ -58,6 +58,11 @@ export default function Geoloc({ grantedLocation, grantedCamera }) {
         latitudeDelta: 0.015,
         longitudeDelta: 0.0121,
       });
+      // Définir les coordonnées initiales du Marker ici
+      setMarkerPosition({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
       // Utilisez la fonction reverseGeocode ici pour obtenir l'adresse initiale.
       reverseGeocode(location.coords.latitude, location.coords.longitude);
     }
