@@ -2,12 +2,10 @@ import React, { useState, useEffect } from "react";
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, Button, Switch, Text, Alert, Image } from "react-native";
 import Geoloc from './Components/Geoloc';
-// import CookieConsent, { Cookies, getCookieConsentValue } from "react-cookie-consent";
 import { PermissionsAndroid } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import LottieView from 'lottie-react-native';
-
 import CookieBanner from './Components/cookibanner'
 
 
@@ -137,8 +135,7 @@ export default function App() {
 
           {({ navigation }) => (
             <View style={styles.container}>
-              {/* <CookieConsent><Text>This website uses cookies to enhance the user experience.</Text></CookieConsent> */}
-<CookieBanner/>
+              <CookieBanner />
               <View style={styles.animationContainer}>
                 <Text style={styles.titleText}>SIMPLONVILLE</Text>
                 <View style={styles.neumorphicContainer}>
