@@ -13,10 +13,8 @@ export default function Geoloc({ grantedLocation, grantedCamera }) {
   const [street, setstreet] = useState('');
   const [number, setnumber] = useState('');
   const [markerPosition, setMarkerPosition] = useState(mapRegion);
-
   const [isLoadingLocation, setIsLoadingLocation] = useState(true);
 
-  // Déplacez la fonction reverseGeocode ici pour la rendre accessible dans tous les useEffect.
   const reverseGeocode = async (lat, lon) => {
     try {
       let result = await Location.reverseGeocodeAsync({
@@ -58,12 +56,10 @@ export default function Geoloc({ grantedLocation, grantedCamera }) {
         latitudeDelta: 0.015,
         longitudeDelta: 0.0121,
       });
-      // Définir les coordonnées initiales du Marker ici
       setMarkerPosition({
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
       });
-      // Utilisez la fonction reverseGeocode ici pour obtenir l'adresse initiale.
       reverseGeocode(location.coords.latitude, location.coords.longitude);
     }
   }, [mapReady, location]);
@@ -79,7 +75,6 @@ export default function Geoloc({ grantedLocation, grantedCamera }) {
             <View>
               <Text style={styles.label}>Latitude :</Text>
               <Text style={styles.value}>{location.coords.latitude}</Text>
-
               <Text style={styles.label}>Longitude :</Text>
               <Text style={styles.value}>{location.coords.longitude}</Text>
             </View>
@@ -98,8 +93,6 @@ export default function Geoloc({ grantedLocation, grantedCamera }) {
                 onDragEnd={(e) => {
                   const { latitude, longitude } = e.nativeEvent.coordinate;
                   setMarkerPosition({ latitude, longitude });
-
-                  // Mettez à jour l'adresse en fonction des nouvelles coordonnées ici
                   reverseGeocode(latitude, longitude);
                 }}
               />

@@ -32,12 +32,10 @@ export default function AlertForm(props) {
         setFullAdress(ad);
     }, [city, street, number]);
 
-    function toggleCameraType() {
-        setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
-    }
-    // if (!permission)  
+    // function toggleCameraType() {
+    //     setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
+    // }
 
-    // if (!permission.granted)  
 
 
 
