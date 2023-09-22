@@ -1,9 +1,17 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import * as MailComposer from 'expo-mail-composer';
+import * as ImagePicker from 'expo-image-picker';
+import { Camera } from 'expo-camera';
+import { CameraType } from 'expo-camera/build/Camera.types';
 
-export default function AlertForm() {
+
+export default function AlertForm(props) {
+    const { city, street, number, location, camera } = props;
+    console.log(camera);
+    console.log(location);
+
     const [alertType, setAlertType] = useState('');
     const [description, setDescription] = useState('');
     const [date, setDate] = useState('');
@@ -15,6 +23,43 @@ export default function AlertForm() {
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
 
+    const [type, setType] = useState(CameraType.back);
+    const [fullAdress, setFullAdress] = useState('');
+
+    useEffect(() => {
+
+        const ad = number + ' ' + street + ' ' + city;
+        setFullAdress(ad);
+    }, [city, street, number]);
+
+    function toggleCameraType() {
+        setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
+    }
+    // if (!permission)  
+
+    // if (!permission.granted)  
+
+
+
+
+
+    const pickImage = async () => {
+        try {
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 1,
+            });
+            console.log(result);
+            console.log(result.assets[0].uri);
+            if (!result.canceled) {
+                setPhoto(result.assets[0].uri);
+            }
+        } catch (error) {
+            console.log('Error picking an image:', error);
+        }
+    };
     const handleSubmit = async () => {
         console.log('formulaire soumis');
         console.log('Type d\'Alerte :', alertType);
@@ -27,24 +72,34 @@ export default function AlertForm() {
         console.log('Nom :', lastName);
         console.log('Email :', email);
         console.log('Téléphone :', phone);
-        if ((alertType == "") || (description == "") || (date == "") || (hours == "") || (address == "") || (firstName == "") || (lastName == "") || (email == "") || (phone == "")) {
-            alert("Veuillez renseigner tous les champs!")
+
+        if (
+            alertType === '' ||
+            description === '' ||
+            date === '' ||
+            hours === '' ||
+            firstName === '' ||
+            lastName === '' ||
+            email === '' ||
+            phone === ''
+        ) {
+            alert("Veuillez renseigner tous les champs!");
         } else {
             const emailOptions = {
                 subject: 'Alert Form Submission',
                 body: `
-                Type d'Alerte : ${alertType}
-                Description de l'Alerte : ${description}
-                Date : ${date}
-                Heures : ${hours}
-                Adresse : ${address}
-                Photo : ${photo}
-                Prénom : ${firstName}
-                Nom : ${lastName}
-                Email : ${email}
-                Téléphone : ${phone}
-            `,
+                    Type d'Alerte : ${alertType}
+                    Description de l'Alerte : ${description}
+                    Date : ${date}
+                    Heures : ${hours}
+                    Adresse : ${address}
+                    Prénom : ${firstName}
+                    Nom : ${lastName}
+                    Email : ${email}
+                    Téléphone : ${phone}
+                `,
                 recipients: ['pro.legrand.thomas@gmail.com'],
+                attachments: photo ? [photo] : [],
             };
 
             try {
@@ -55,7 +110,6 @@ export default function AlertForm() {
             }
         }
     };
-
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Formulaire d'Alerte</Text>
@@ -104,23 +158,51 @@ export default function AlertForm() {
                     />
                 </View>
             </View>
+            {location ? (
+                <View style={styles.half}>
+                    <Text>Adresse : *</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={fullAdress}
+                        onChangeText={(text) => setAddress(text)}
+                        editable={false}
+                    />
+                </View>
+            ) : (
+                <View style={styles.half}>
+                    <Text>Adresse : *</Text>
+                    <TextInput
+                        style={styles.input}
+                        value={address}
+                        onChangeText={(text) => setAddress(text)}
+                    />
+                </View>
+            )}
+            <View style={styles.fieldContainer}>
+                <Text>Photo : *</Text>
+                {photo ? (
+                    <Image
+                        source={{ uri: photo }}
+                        style={{ width: 100, height: 100 }}
+                    />
+                ) : (
+                    <Button
+                        title="Joindre une photo"
+                        onPress={pickImage}
+                    />
+                )}
+            </View>
 
-            <Text>Adresse : *</Text>
-            <TextInput
-                style={styles.input}
-                value={address}
-                onChangeText={(text) => setAddress(text)}
-                placeholder="Saisir votre adresse"
-            />
 
-            <Text>Photo : *</Text>
-            <TextInput
-                style={styles.input}
-                value={photo}
-                onChangeText={(text) => setPhoto(text)}
-                placeholder="importez ici votre photo"
-            />
-
+            {/* <View>
+                <Camera style={{ width: 200, height: 200 }} type={type}>
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity style={styles.button} onPress={toggleCameraType}>
+                            <Text style={styles.text}>Basculer la caméra</Text>
+                        </TouchableOpacity>
+                    </View>
+                </Camera>
+            </View> */}
             <View style={styles.row}>
                 <View style={styles.half}>
                     <Text>Prénom : *</Text>
@@ -171,18 +253,18 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
-        backgroundColor: "#fff", 
-        padding: 20, 
-        borderRadius: 10, 
-        shadowColor: "#000", 
+        backgroundColor: "#fff",
+        padding: 20,
+        borderRadius: 10,
+        shadowColor: "#000",
         shadowOffset: {
-          width: 0,
-          height: 4,
+            width: 0,
+            height: 4,
         },
-        shadowOpacity: 0.5, 
-        shadowRadius: 5, 
-        elevation: 5, 
-        margin: 50, 
+        shadowOpacity: 0.5,
+        shadowRadius: 5,
+        elevation: 5,
+        margin: 50,
     },
     title: {
         fontSize: 24,
@@ -208,5 +290,5 @@ const styles = StyleSheet.create({
         color: 'red',
         fontSize: 14,
     },
-    
+
 });

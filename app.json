@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Simplonville",
-    "slug": "Simplonville",
+    "slug": "testsimplonville",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -25,6 +25,18 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0b92c4a8-f626-4a2e-96f4-daab457b1243"
+      }
+    },
+    "owner": "ziilog",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/0b92c4a8-f626-4a2e-96f4-daab457b1243"
     }
   }
 }

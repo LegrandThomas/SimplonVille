@@ -190,6 +190,7 @@ export default function App() {
           {({ navigation }) => (
             <Geoloc
               grantedLocation={grantedLocation}
+              grantedCamera={grantedCamera}
             />
           )}
         </Stack.Screen>
